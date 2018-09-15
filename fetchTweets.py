@@ -8,12 +8,16 @@ import json
 #from pyquery import PyQuery
 import re
 from bs4 import BeautifulSoup
+from postTweets import TweetPost
+
 
 class TwitterQuery():
     
-    def __init__(self):
-        pass 
-
+    def __init__(self,key,term):
+        self.db = TweetPost()
+        self.key = key
+        self.ttype = term 
+    
     def getTweets(self,query,maxTweets=0,mnth=6):
         refreshCursor = ''
         results = []
@@ -21,7 +25,7 @@ class TwitterQuery():
         #cookieJar = http.cookiejar.CookieJar()
         cookieJar = CookieJar()
         lang = 'en'
-        
+        totalTweet = 0
         active = True
         while active:
             json = TwitterQuery.getTweetPage(query,refreshCursor, cookieJar,lang)
@@ -38,23 +42,26 @@ class TwitterQuery():
             if len(tweets) == 0:
                 break
 
-            for tweetHTML in tweets:
-                #tweetPQ = PyQuery(tweetHTML)
-                tweet = {}
-                pT = tweetHTML.find('p','js-tweet-text').get_text()
-                dateSec = int(tweetHTML.find('span','js-short-timestamp')['data-time'])
-                txt =  re.sub(r"\s+", " ", pT.replace('# ', '#').replace('@ ', '@'))
-                #txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
-                #dateSec = int(tweetPQ("small.time span.js-short-timestamp").attr("data-time"))    
-                tweet['text'] = txt
-                tweet['date'] = datetime.datetime.fromtimestamp(dateSec)
-                results.append(tweet)
-                if maxTweets > 0 and len(results) >=maxTweets:
-                    active = False
-                    break    
+            totalTweet += len(tweets)
 
+            # for tweetHTML in tweets:
+            #     #tweetPQ = PyQuery(tweetHTML)
+            #     tweet = {}
+            #     pT = tweetHTML.find('p','js-tweet-text').get_text()
+            #     dateSec = int(tweetHTML.find('span','js-short-timestamp')['data-time'])
+            #     txt =  re.sub(r"\s+", " ", pT.replace('# ', '#').replace('@ ', '@'))
+            #     #txt = re.sub(r"\s+", " ", tweetPQ("p.js-tweet-text").text().replace('# ', '#').replace('@ ', '@'))
+            #     #dateSec = int(tweetPQ("small.time span.js-short-timestamp").attr("data-time"))    
+            #     tweet['text'] = txt
+            #     tweet['date'] = datetime.datetime.fromtimestamp(dateSec)
+            #     results.append(tweet)
+            #     if maxTweets > 0 and len(results) >=maxTweets:
+            #         active = False
+            #         break
+            self.db.addCount(self.key,totalTweet, self.ttype)
+            results = []
 
-        return results
+        #return results
 
     def getTweetPage(querySearch,refreshCursor,cookieJar,lang,mnth=1):
         now = datetime.datetime.now() 

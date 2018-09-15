@@ -5,7 +5,9 @@ class MyListener(SqsListener):
     def handle_message(self, body, attributes, messages_attributes):
         term1 = body['term1']
         term2 = body['term2']
-        api = TwitterQuery()
+        key =   body['key']
+        
+        api = TwitterQuery(key)
         tweets1 = api.getTweets(query = term1,mnth=1)
         tweets2 = api.getTweets(query = term2,mnth=1)
 
