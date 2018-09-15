@@ -114,7 +114,7 @@ class TwitterQuery():
         return dataJson
 
 def main():
-    api = TwitterQuery()
+    api = TwitterQuery("term1")
     tweets1 = api.getTweets(query = '"Google Home"',mnth=1)
     #tweets2 = api.getTweets(query = '"Alexa Echo"',mnth=2)
    
