@@ -43,6 +43,7 @@ class TwitterQuery():
                 break
 
             totalTweet += len(tweets)
+            print(totalTweet)
 
             # for tweetHTML in tweets:
             #     #tweetPQ = PyQuery(tweetHTML)
